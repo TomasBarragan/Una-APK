@@ -1,6 +1,6 @@
 import { styled } from "nativewind";
 import React, { useState } from "react";
-import { Modal, Pressable, Text, TextInput, View, Alert } from "react-native";
+import { Modal, Pressable, Text, TextInput, View } from "react-native";
 import { useTareas } from "../contexts/TareasContext";
 import { tareaSchema } from "../schemas/tareasSchema";
 
@@ -8,26 +8,6 @@ const StyledView = styled(View);
 const StyledText = styled(Text);
 const StyledPressable = styled(Pressable);
 const StyledTextInput = styled(TextInput);
-
-const obtenerFechaDesdeDiaYMes = (dia: string, mes: string): Date | null => {
-  const year = new Date().getFullYear();
-  const day = parseInt(dia);
-  const month = parseInt(mes);
-
-  if (
-    isNaN(day) ||
-    isNaN(month) ||
-    day < 1 ||
-    day > 31 ||
-    month < 1 ||
-    month > 12
-  ) {
-    return null;
-  }
-
-  const fecha = new Date(year, month - 1, day);
-  return isNaN(fecha.getTime()) ? null : fecha;
-};
 
 export default function ModalTarea({
   visible,
@@ -58,24 +38,7 @@ export default function ModalTarea({
   };
 
   const handleCrearTarea = () => {
-    const fecha = obtenerFechaDesdeDiaYMes(form.dia, form.mes);
-
-    if (!fecha) {
-      setErrores((prev) => ({
-        ...prev,
-        dia: "Día o mes inválido",
-        mes: "Día o mes inválido",
-      }));
-      return;
-    }
-
-    const tareaConFecha = {
-      titulo: form.titulo,
-      descripcion: form.descripcion,
-      fecha,
-    };
-
-    const resultado = tareaSchema.safeParse(tareaConFecha);
+    const resultado = tareaSchema.safeParse(form);
 
     if (!resultado.success) {
       const nuevosErrores: { [key: string]: string } = {};
@@ -86,7 +49,9 @@ export default function ModalTarea({
       return;
     }
 
-    agregarTarea({ id: 0, ...tareaConFecha });
+    const tarea = { ...form, id: Date.now(), completada: false };
+
+    agregarTarea(tarea);
     resetForm();
     onClose();
   };
@@ -136,6 +101,7 @@ export default function ModalTarea({
               Crear Nueva Tarea
             </StyledText>
 
+            {/* Campos del formulario */}
             {renderCampo("Título", "Escribe el título...", "titulo", true)}
             {renderCampo(
               "Descripción",
@@ -153,6 +119,7 @@ export default function ModalTarea({
               </StyledView>
             </StyledView>
 
+            {/* Botones */}
             <StyledView className="flex-row justify-between mt-1">
               <StyledPressable
                 onPress={handleCancelar}

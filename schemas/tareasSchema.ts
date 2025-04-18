@@ -5,15 +5,19 @@ export const tareaSchema = z.object({
     .string()
     .min(1, "El título es obligatorio.")
     .max(12, "El título no puede exceder los 12 caracteres."),
+
   descripcion: z
     .string()
     .min(1, "La descripción es obligatoria.")
     .max(50, "La descripción no puede exceder los 50 caracteres."),
-  fecha: z.date().refine((date) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return date >= today;
-  }, "La fecha debe ser hoy o posterior."),
+
+  dia: z.string().refine((v) => /^\d+$/.test(v) && +v >= 1 && +v <= 31, {
+    message: "El día debe estar entre 1 y 31.",
+  }),
+
+  mes: z.string().refine((v) => /^\d+$/.test(v) && +v >= 1 && +v <= 12, {
+    message: "El mes debe estar entre 1 y 12.",
+  }),
 });
 
 export type TareaFormulario = z.infer<typeof tareaSchema>;

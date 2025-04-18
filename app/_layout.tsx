@@ -2,6 +2,7 @@ import { Slot } from "expo-router";
 import { StatusBar, View } from "react-native";
 import { useState, useEffect } from "react";
 import SplashScreen from "../components/SplashScreen";
+import { TareasProvider } from "../contexts/TareasContext";
 
 export default function Layout() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -19,9 +20,11 @@ export default function Layout() {
   }
 
   return (
-    <View style={{ flex: 1 }}>
-      <StatusBar barStyle="default" backgroundColor="black" />
-      <Slot />
-    </View>
+    <TareasProvider>
+      <View style={{ flex: 1 }}>
+        <StatusBar barStyle="default" backgroundColor="black" />
+        <Slot />
+      </View>
+    </TareasProvider>
   );
 }

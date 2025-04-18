@@ -2,6 +2,7 @@ import { View, Text, ScrollView, Pressable } from "react-native";
 import { styled } from "nativewind";
 import { MaterialIcons } from "@expo/vector-icons";
 import { PlusIcon } from "./Iconos";
+import { useTareas } from "../contexts/TareasContext";
 
 const StyledView = styled(View);
 const StyledText = styled(Text);
@@ -19,20 +20,21 @@ const shadowStyle = {
   elevation: 5,
 };
 
-const tareas = [
-  { id: 1, nombre: "Lengua II", completada: true },
-  { id: 2, nombre: "Matematicas I", completada: false },
-  { id: 3, nombre: "Fisica III", completada: false },
-  { id: 4, nombre: "Programacion V", completada: false },
-  { id: 5, nombre: "Quimica", completada: false },
-  { id: 6, nombre: "Historia", completada: false },
-];
-
 export default function TareasPendientes({
   onPlusPress,
 }: {
   onPlusPress: () => void;
 }) {
+  const { tareas, agregarTarea, eliminarTarea, completarTarea } = useTareas();
+
+  const handleCompletado = (id: number) => {
+    completarTarea(id);
+  };
+
+  const handleEliminar = (id: number) => {
+    eliminarTarea(id);
+  };
+
   return (
     <StyledView
       className="bg-white rounded-[18px] p-4 shadow-md mx-4"
@@ -88,13 +90,16 @@ export default function TareasPendientes({
               <StyledView className="flex-row items-center space-x-3">
                 <MaterialIcons name="menu-book" size={24} color="#2563EB" />
                 <StyledText className="text-[16px] font-semibold">
-                  {tarea.nombre}
+                  {tarea.titulo}
                 </StyledText>
               </StyledView>
 
               <StyledView className="flex-row space-x-3">
                 {/* Botón completar */}
-                <StyledPressable className="p-1 rounded-full">
+                <StyledPressable
+                  className="p-1 rounded-full"
+                  onPress={() => handleCompletado(tarea.id)}
+                >
                   <MaterialIcons
                     name={
                       tarea.completada
@@ -107,7 +112,10 @@ export default function TareasPendientes({
                 </StyledPressable>
 
                 {/* Botón eliminar */}
-                <StyledPressable className="p-1 rounded-full">
+                <StyledPressable
+                  className="p-1 rounded-full"
+                  onPress={() => handleEliminar(tarea.id)}
+                >
                   <MaterialIcons name="delete" size={24} color="#FCA5A5" />
                 </StyledPressable>
               </StyledView>
