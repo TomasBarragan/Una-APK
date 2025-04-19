@@ -33,21 +33,25 @@ export default function ModalTarea({
   });
 
   const [errores, setErrores] = useState<{ [key: string]: string }>({});
-  const [slideAnim] = useState(new Animated.Value(500)); // Empezamos con el modal fuera de la pantalla a la derecha
+  const [slideAnim] = useState(new Animated.Value(500));
+  const [isVisibleInterno, setIsVisibleInterno] = useState(false);
 
   useEffect(() => {
     if (visible) {
-      // Animar la entrada del modal desde la derecha
-      Animated.spring(slideAnim, {
-        toValue: 0, // Finalizamos en la posición original
+      setIsVisibleInterno(true);
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 500,
         useNativeDriver: true,
       }).start();
     } else {
-      // Si el modal se cierra, animamos su salida hacia la derecha
-      Animated.spring(slideAnim, {
-        toValue: 500, // Empujamos el modal hacia la derecha fuera de la pantalla
+      Animated.timing(slideAnim, {
+        toValue: 500,
+        duration: 300,
         useNativeDriver: true,
-      }).start();
+      }).start(() => {
+        setIsVisibleInterno(false);
+      });
     }
   }, [visible]);
 
@@ -112,67 +116,63 @@ export default function ModalTarea({
   );
 
   return (
-    <StyledView>
-      <Modal
-        animationType="none"
-        transparent
-        visible={visible}
-        onRequestClose={handleCancelar}
-      >
-        <StyledView className="flex-1 justify-center items-center bg-black/40">
-          <Animated.View
-            style={{
-              transform: [{ translateX: slideAnim }],
-              backgroundColor: "white",
-              width: "85%",
-              padding: 24,
-              borderRadius: 22,
-            }}
-          >
-            <StyledText className="text-[20px] font-bold mb-4">
-              Crear Nueva Tarea
-            </StyledText>
+    <Modal
+      animationType="none"
+      transparent
+      visible={isVisibleInterno}
+      onRequestClose={handleCancelar}
+    >
+      <StyledView className="flex-1 justify-center items-center bg-black/40">
+        <Animated.View
+          style={{
+            transform: [{ translateX: slideAnim }],
+            backgroundColor: "white",
+            width: "85%",
+            padding: 24,
+            borderRadius: 22,
+          }}
+        >
+          <StyledText className="text-[20px] font-bold mb-4">
+            Crear Nueva Tarea
+          </StyledText>
 
-            {/* Campos del formulario */}
-            {renderCampo("Título", "Escribe el título...", "titulo", true)}
-            {renderCampo(
-              "Descripción",
-              "Escribe la descripción...",
-              "descripcion",
-              true
-            )}
+          {renderCampo("Título", "Escribe el título...", "titulo", true)}
+          {renderCampo(
+            "Descripción",
+            "Escribe la descripción...",
+            "descripcion",
+            true
+          )}
 
-            <StyledView className="flex-row gap-2">
-              <StyledView className="flex-1">
-                {renderCampo("Día", "Ej: 20", "dia")}
-              </StyledView>
-              <StyledView className="flex-1">
-                {renderCampo("Mes", "Ej: 04", "mes")}
-              </StyledView>
+          <StyledView className="flex-row gap-2">
+            <StyledView className="flex-1">
+              {renderCampo("Día", "Ej: 20", "dia")}
             </StyledView>
-
-            {/* Botones */}
-            <StyledView className="flex-row justify-between mt-1">
-              <StyledPressable
-                onPress={handleCancelar}
-                className="bg-[#FF4D4D] px-4 py-3 rounded-[15px]"
-              >
-                <StyledText className="text-white font-bold text-[13px]">
-                  CANCELAR
-                </StyledText>
-              </StyledPressable>
-              <StyledPressable
-                onPress={handleCrearTarea}
-                className="bg-[#007AFF] px-7 py-3 rounded-[15px]"
-              >
-                <StyledText className="text-white font-bold text-[13px]">
-                  CREAR TAREA
-                </StyledText>
-              </StyledPressable>
+            <StyledView className="flex-1">
+              {renderCampo("Mes", "Ej: 04", "mes")}
             </StyledView>
-          </Animated.View>
-        </StyledView>
-      </Modal>
-    </StyledView>
+          </StyledView>
+
+          <StyledView className="flex-row justify-between mt-1">
+            <StyledPressable
+              onPress={handleCancelar}
+              className="bg-[#FF4D4D] px-4 py-3 rounded-[15px]"
+            >
+              <StyledText className="text-white font-bold text-[13px]">
+                CANCELAR
+              </StyledText>
+            </StyledPressable>
+            <StyledPressable
+              onPress={handleCrearTarea}
+              className="bg-[#007AFF] px-7 py-3 rounded-[15px]"
+            >
+              <StyledText className="text-white font-bold text-[13px]">
+                CREAR TAREA
+              </StyledText>
+            </StyledPressable>
+          </StyledView>
+        </Animated.View>
+      </StyledView>
+    </Modal>
   );
 }

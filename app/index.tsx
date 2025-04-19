@@ -117,7 +117,9 @@ export default function Home() {
         <TareasPendientes onPlusPress={() => setModal(true)} />
       </AnimatedView>
       {/* Modal para agregar tareas */}
-      <ModalTarea visible={modal} onClose={() => setModal(false)} />
+      <StyledView>
+        <ModalTarea visible={modal} onClose={() => setModal(false)} />
+      </StyledView>
       {/* Barra de navegación */}
       <NavBar />
     </StyledView>
