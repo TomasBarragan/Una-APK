@@ -1,6 +1,13 @@
 import { styled } from "nativewind";
-import React, { useState } from "react";
-import { Modal, Pressable, Text, TextInput, View } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  Modal,
+  Pressable,
+  Text,
+  TextInput,
+  View,
+  Animated,
+} from "react-native";
 import { useTareas } from "../contexts/TareasContext";
 import { tareaSchema } from "../schemas/tareasSchema";
 
@@ -26,6 +33,23 @@ export default function ModalTarea({
   });
 
   const [errores, setErrores] = useState<{ [key: string]: string }>({});
+  const [slideAnim] = useState(new Animated.Value(500)); // Empezamos con el modal fuera de la pantalla a la derecha
+
+  useEffect(() => {
+    if (visible) {
+      // Animar la entrada del modal desde la derecha
+      Animated.spring(slideAnim, {
+        toValue: 0, // Finalizamos en la posición original
+        useNativeDriver: true,
+      }).start();
+    } else {
+      // Si el modal se cierra, animamos su salida hacia la derecha
+      Animated.spring(slideAnim, {
+        toValue: 500, // Empujamos el modal hacia la derecha fuera de la pantalla
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [visible]);
 
   const actualizarCampo = (campo: string, valor: string) => {
     setForm((prev) => ({ ...prev, [campo]: valor }));
@@ -90,13 +114,21 @@ export default function ModalTarea({
   return (
     <StyledView>
       <Modal
-        animationType="fade"
+        animationType="none"
         transparent
         visible={visible}
         onRequestClose={handleCancelar}
       >
         <StyledView className="flex-1 justify-center items-center bg-black/40">
-          <StyledView className="bg-white w-4/5 p-6 rounded-[22px]">
+          <Animated.View
+            style={{
+              transform: [{ translateX: slideAnim }],
+              backgroundColor: "white",
+              width: "85%",
+              padding: 24,
+              borderRadius: 22,
+            }}
+          >
             <StyledText className="text-[20px] font-bold mb-4">
               Crear Nueva Tarea
             </StyledText>
@@ -138,7 +170,7 @@ export default function ModalTarea({
                 </StyledText>
               </StyledPressable>
             </StyledView>
-          </StyledView>
+          </Animated.View>
         </StyledView>
       </Modal>
     </StyledView>
