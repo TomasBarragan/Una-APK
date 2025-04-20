@@ -20,7 +20,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.tomas_2009.Study_FlowAPP"
     },
     "androidNavigationBar": {
       "backgroundColor": "#ffffff",
@@ -28,6 +29,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "7629ff85-d0b3-4908-a9ba-792992030c9f"
+      }
     }
   }
 }
