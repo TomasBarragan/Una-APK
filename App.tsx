@@ -1,6 +1,6 @@
+import "react-native-reanimated";
 import { Slot } from "expo-router";
 import { StyleSheet, View } from "react-native";
-import "react-native-reanimated";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 export default function App() {
